@@ -3,6 +3,7 @@
 use std::{collections::HashMap, fs, path::PathBuf};
 use tauri::command;
 use tauri_plugin_shell::ShellExt;
+use std::process::Command;
 
 #[derive(serde::Serialize)]
 struct FileInfo {
@@ -107,6 +108,46 @@ fn read_files_from_dir(path: &PathBuf) -> Vec<FileInfo> {
     files
 }
 
+#[tauri::command]
+fn show_in_folder(path: String) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    {
+        Command::new("explorer")
+            .args(["/select,", &path])
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        Command::new("open")
+            .args(["-R", &path])
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+
+    #[cfg(target_os = "linux")]
+    {
+        // Try different file managers
+        if let Ok(_) = Command::new("nautilus").arg(&path).spawn() {
+            // Nautilus (GNOME)
+        } else if let Ok(_) = Command::new("dolphin").arg("--select").arg(&path).spawn() {
+            // Dolphin (KDE)
+        } else if let Ok(_) = Command::new("thunar").arg(&path).spawn() {
+            // Thunar (XFCE)
+        } else {
+            // Fallback: open parent directory
+            let parent = std::path::Path::new(&path).parent().unwrap_or(std::path::Path::new("/"));
+            Command::new("xdg-open")
+                .arg(parent)
+                .spawn()
+                .map_err(|e| e.to_string())?;
+        }
+    }
+
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
@@ -115,7 +156,8 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             get_downloads_files,
             group_files_by_extension,
-            group_files_by_modified_date
+            group_files_by_modified_date,
+            show_in_folder
         ])
         .run(tauri::generate_context!())
         .expect("error while running Tauri application");
