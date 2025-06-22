@@ -3,6 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import FileIcons from "./comps/FileIcons";
 
+import { TiMinus } from "react-icons/ti";
+
 type FileInfo = {
   name: string;
   path: string;
@@ -19,11 +21,30 @@ function App() {
   const [groups, setGroups] = useState<FileGroup[] | null>(null);
   const [view, setView] = useState<"all" | "extension" | "date">("all");
 
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+
+  const toggleGroup = (type: string) => {
+  setExpandedGroups(prev => ({
+    ...prev,
+    [type]: !prev[type],
+  }));
+};
+
   useEffect(() => {
     invoke<FileInfo[]>("get_downloads_files")
       .then(setFiles)
       .catch(console.error);
   }, []);
+
+useEffect(() => {
+  if (!groups) return;
+
+  const initialExpanded: Record<string, boolean> = {};
+  for (const group of groups) {
+    initialExpanded[group.key] = true;
+  }
+  setExpandedGroups(initialExpanded);
+}, [groups]); // <-- depend on 'groups'
 
   const loadGroupedByExtension = () => {
     invoke<FileGroup[]>("group_files_by_extension")
@@ -93,8 +114,10 @@ function App() {
       {/* File List */}
       {view === "all" && (
         <ul>
+          <h2 className="text-xl font-bold mb-2">All files</h2>
           {files.map((file) => (
             <div>
+              
               <li
                 key={file.path}
                 className="my-3 p-2 bg-stone-800 text-white border-1 relative"
@@ -113,9 +136,14 @@ function App() {
         <div className="space-y-4">
           {groups.map((group) => (
             <div key={group.key}>
-              <h2 className="text-xl font-bold mb-2">{group.key}</h2>
+              <div className="flex flex-row items-center">
+              <h2 className="text-xl font-bold mb-2 ">{group.key}</h2>
+              <button className="ml-4 border-1 px-1" onClick={() => toggleGroup(group.key)}>
+      {expandedGroups[group.key] ? 'Hide' : 'Show'} {/*{group.key}*/}
+    </button>
+              </div>
               <ul>
-                {group.files.map((file) => (
+                {expandedGroups[group.key] && group.files.map((file) => (
                   <li key={file.path} className="my-3 p-2  border-1 ">
                     <div className="flex flex-row">
                       {file.name} — {(file.size / 1024).toFixed(2)} KB
