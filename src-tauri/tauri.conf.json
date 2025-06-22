@@ -9,6 +9,9 @@
     "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
+  "plugins": {
+  "opener": {}
+},
   "app": {
     "windows": [
       {
@@ -18,8 +21,9 @@
       }
     ],
     "security": {
-      "csp": null
+      "capabilities": ["default"]
     }
+    
   },
   "bundle": {
     "active": true,

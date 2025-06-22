@@ -109,7 +109,9 @@ fn read_files_from_dir(path: &PathBuf) -> Vec<FileInfo> {
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             get_downloads_files,
             group_files_by_extension,

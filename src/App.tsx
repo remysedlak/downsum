@@ -3,13 +3,8 @@ import { invoke } from "@tauri-apps/api/core";
 import "./App.css";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { RiFolder2Line } from "react-icons/ri";
-import { open } from '@tauri-apps/plugin-shell';
-
-const openInExplorer = (filePath: string) => {
-  open(filePath)
-    .then(() => console.log("Opened:", filePath))
-    .catch((err) => console.error("Failed to open:", err));
-};
+import { openPath } from '@tauri-apps/plugin-opener';
+import { MdOutlineFileOpen } from "react-icons/md";
 
 type FileInfo = {
   name: string;
@@ -111,9 +106,15 @@ function App() {
                     
                     {file.name} — {(file.size / 1024).toFixed(2)} KB 
                     <RiDeleteBin6Line className="hover:text-red-500 hover:cursor-pointer  w-5 h-5 rounded-full absolute right-8"></RiDeleteBin6Line>
-                    <button type="button" onClick={() => openInExplorer(file.path)}>
-                      open
-                    </button>
+                    <MdOutlineFileOpen  className="hover:text-blue-500 hover:cursor-pointer  w-5 h-5 rounded-full absolute right-16"
+  onClick={() => {
+    console.log("Trying to open:", file.path);
+    openPath(file.path)
+      .then(() => console.log("Opened:", file.path))
+      .catch((err) => console.error("Failed to open:", err));
+  }}
+>
+ </MdOutlineFileOpen >
                   </div>
                   </li>
                 ))}
