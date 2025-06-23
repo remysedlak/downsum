@@ -31,13 +31,17 @@ export type DuplicateGroup = {
 function App() {
   const [files, setFiles] = useState<FileInfo[]>([]);
   const [groups, setGroups] = useState<FileGroup[] | null>(null);
-  const [view, setView] = useState<"all" | "extension" | "date" | "duplicates">("all");
+  const [view, setView] = useState<"all" | "extension" | "date" | "duplicates">(
+    "all"
+  );
   const [duplicateGroups, setDuplicateGroups] = useState<DuplicateGroup[]>([]);
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
-  const [showGroupList, setShowGroupList] = useState<boolean>(false);  // starts as false
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  );
+  const [showGroupList, setShowGroupList] = useState<boolean>(false); // starts as false
 
   const toggleGroup = (key: string) => {
-    setExpandedGroups(prev => ({
+    setExpandedGroups((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
@@ -51,11 +55,10 @@ function App() {
   }, []);
 
   const toggleShowGroupList = () => {
-    setShowGroupList(prev => !prev);
+    setShowGroupList((prev) => !prev);
   };
 
   const loadGroupedByExtension = () => {
-    
     invoke<FileGroup[]>("group_files_by_extension")
       .then((data) => {
         setGroups(data);
@@ -111,27 +114,43 @@ function App() {
       {/* Util Bar */}
       <div className="flex flex-row items-center gap-2 mb-4 border-b-2 border-white ">
         <h2 className="mb-4 text-xl text-left">Downloads Folder</h2>
-        <div className="ml-8 flex flex-row gap-4 mb-4 text-sm ml-auto ">
+        <div className="flex flex-row gap-4 mb-4 text-sm ml-auto">
           {view !== "all" && (
-          <button onClick={loadAll} className="bg-stone-800 px-3 py-1 rounded border-1 border-white">
-            Clear filters
-          </button>
+            <button
+              onClick={loadAll}
+              className="bg-stone-800 px-3 py-1 rounded border-1 border-white"
+            >
+              Clear filters
+            </button>
           )}
           <div className="flex flex-col">
-          <button onClick={() => toggleShowGroupList()} className="w-max px-3 py-1 rounded bg-stone-800 border-1 border-white">Group by</button>
-          {showGroupList && (
-            <div className="absolute w-full">
-            <button onClick={loadGroupedByExtension} className="top-7 w-max absolute px-3 py-1 rounded bg-stone-800 border-1 border-white">
-              Extension
+            <button
+              onClick={() => toggleShowGroupList()}
+              className="w-max px-3 py-1 rounded bg-stone-800 border-1 border-white"
+            >
+              Group by
             </button>
-            <button onClick={loadGroupedByDate} className="top-14 absolute bg-stone-800 px-3 py-1 rounded border-1 border-white">
-              Date
-            </button>
+            {showGroupList && (
+              <div className="absolute w-full">
+                <button
+                  onClick={loadGroupedByExtension}
+                  className="top-7 w-max absolute px-3 py-1 rounded bg-stone-800 border-1 border-white"
+                >
+                  Extension
+                </button>
+                <button
+                  onClick={loadGroupedByDate}
+                  className="top-14 absolute bg-stone-800 px-3 py-1 rounded border-1 border-white"
+                >
+                  Date
+                </button>
+              </div>
+            )}
           </div>
-          
-          )}
-          </div>
-          <button onClick={loadDuplicatesMode} className="bg-stone-800 px-3 py-1 rounded border-1 border-white">
+          <button
+            onClick={loadDuplicatesMode}
+            className="bg-stone-800 px-3 py-1 rounded border-1 border-white"
+          >
             Find Duplicates
           </button>
         </div>
@@ -145,7 +164,10 @@ function App() {
             <p className="text-gray-400">No duplicates found.</p>
           )}
           {duplicateGroups.map((group) => (
-            <div key={group.original_name} className="mb-4 p-3 border rounded bg-stone-900">
+            <div
+              key={group.original_name}
+              className="mb-4 p-3 border rounded bg-stone-900"
+            >
               <div className="flex justify-between items-center">
                 <h3 className="text-lg font-semibold">{group.original_name}</h3>
                 <button
@@ -158,11 +180,15 @@ function App() {
               {expandedGroups[group.original_name] && (
                 <ul className="mt-2 space-y-2">
                   {group.files.map((file) => (
-                    <li key={file.path} className="p-2 bg-stone-800 flex justify-between rounded">
+                    <li
+                      key={file.path}
+                      className="p-2 bg-stone-800 flex justify-between rounded"
+                    >
                       <div className="flex gap-4">
                         <span>{file.name}</span>
                         <span className="text-sm text-gray-400">
-                          {file.duplicate_type} — {(file.size / 1024).toFixed(2)} KB
+                          {file.duplicate_type} —{" "}
+                          {(file.size / 1024).toFixed(2)} KB
                         </span>
                       </div>
                       <FileIcons path={file.path} />
@@ -185,15 +211,18 @@ function App() {
               className="my-3 p-2 bg-stone-800 text-white border-1 relative"
             >
               <div className="flex flex-row">
-                <a className="hover:cursor-pointer mr-2 text-blue-300 hover:text-red-400" onClick={() => {
-                                    console.log("Trying to open:", file.path);
-                                    openPath(file.path)
-                                        .then(() => console.log("Opened:", file.path))
-                                        .catch((err ) =>
-                                            console.error("Failed to open:", err)
-                                        );
-                                }}>{file.name}</a>
-                 — {(file.size / 1024).toFixed(2)} KB
+                <a
+                  className="hover:cursor-pointer mr-2 text-blue-300 hover:text-red-400"
+                  onClick={() => {
+                    console.log("Trying to open:", file.path);
+                    openPath(file.path)
+                      .then(() => console.log("Opened:", file.path))
+                      .catch((err) => console.error("Failed to open:", err));
+                  }}
+                >
+                  {file.name}
+                </a>
+                — {(file.size / 1024).toFixed(2)} KB
                 <FileIcons path={file.path} />
               </div>
             </li>
@@ -208,7 +237,10 @@ function App() {
             <div key={group.key}>
               <div className="flex flex-row items-center">
                 <h2 className="text-xl font-bold mb-2">{group.key}</h2>
-                <button className="ml-4 border-1 px-1" onClick={() => toggleGroup(group.key)}>
+                <button
+                  className="ml-4 border-1 px-1"
+                  onClick={() => toggleGroup(group.key)}
+                >
                   {expandedGroups[group.key] ? "Hide" : "Show"}
                 </button>
               </div>
