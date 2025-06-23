@@ -34,6 +34,7 @@ function App() {
   const [view, setView] = useState<"all" | "extension" | "date" | "duplicates">("all");
   const [duplicateGroups, setDuplicateGroups] = useState<DuplicateGroup[]>([]);
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
+  const [showGroupList, setShowGroupList] = useState<boolean>(false);  // starts as false
 
   const toggleGroup = (key: string) => {
     setExpandedGroups(prev => ({
@@ -49,7 +50,12 @@ function App() {
       .catch(console.error);
   }, []);
 
+  const toggleShowGroupList = () => {
+    setShowGroupList(prev => !prev);
+  };
+
   const loadGroupedByExtension = () => {
+    
     invoke<FileGroup[]>("group_files_by_extension")
       .then((data) => {
         setGroups(data);
@@ -103,20 +109,30 @@ function App() {
       </div>
 
       {/* Util Bar */}
-      <div className="flex flex-row items-center gap-2 mb-4 border-b-2 border-white">
+      <div className="flex flex-row items-center gap-2 mb-4 border-b-2 border-white ">
         <h2 className="mb-4 text-xl text-left">Downloads Folder</h2>
-        <div className="flex gap-4 mb-4">
+        <div className="ml-8 flex flex-row gap-4 mb-4 text-sm ml-auto ">
+          {view !== "all" && (
           <button onClick={loadAll} className="bg-stone-800 px-3 py-1 rounded border-1 border-white">
-            All Files
+            Clear filters
           </button>
-          <button onClick={loadGroupedByExtension} className="px-3 py-1 rounded bg-stone-800 border-1 border-white">
-            Group by Extension
-          </button>
-          <button onClick={loadGroupedByDate} className="bg-stone-800 px-3 py-1 rounded border-1 border-white">
-            Group by Date
-          </button>
+          )}
+          <div className="flex flex-col">
+          <button onClick={() => toggleShowGroupList()} className="w-max px-3 py-1 rounded bg-stone-800 border-1 border-white">Group by</button>
+          {showGroupList && (
+            <div className="absolute w-full">
+            <button onClick={loadGroupedByExtension} className="top-7 w-max absolute px-3 py-1 rounded bg-stone-800 border-1 border-white">
+              Extension
+            </button>
+            <button onClick={loadGroupedByDate} className="top-14 absolute bg-stone-800 px-3 py-1 rounded border-1 border-white">
+              Date
+            </button>
+          </div>
+          
+          )}
+          </div>
           <button onClick={loadDuplicatesMode} className="bg-stone-800 px-3 py-1 rounded border-1 border-white">
-            Duplicates
+            Find Duplicates
           </button>
         </div>
       </div>
