@@ -59,6 +59,7 @@ function App() {
   };
 
   const loadGroupedByExtension = () => {
+    toggleShowGroupList(); // Hide the group list after selection
     invoke<FileGroup[]>("group_files_by_extension")
       .then((data) => {
         setGroups(data);
@@ -68,6 +69,7 @@ function App() {
   };
 
   const loadGroupedByDate = () => {
+    toggleShowGroupList(); // Hide the group list after selection
     invoke<FileGroup[]>("group_files_by_modified_date")
       .then((data) => {
         setGroups(data);
@@ -134,13 +136,13 @@ function App() {
               <div className="absolute w-full">
                 <button
                   onClick={loadGroupedByExtension}
-                  className="top-7 w-max absolute px-3 py-1 rounded bg-stone-800 border-1 border-white"
+                  className="top-8 w-max absolute px-3 py-1 rounded bg-stone-800 border-1 border-white"
                 >
                   Extension
                 </button>
                 <button
                   onClick={loadGroupedByDate}
-                  className="top-14 absolute bg-stone-800 px-3 py-1 rounded border-1 border-white"
+                  className="top-16 absolute bg-stone-800 px-3 py-1 rounded border-1 border-white"
                 >
                   Date
                 </button>
