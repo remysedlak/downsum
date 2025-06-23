@@ -120,7 +120,7 @@ function App() {
           {view !== "all" && (
             <button
               onClick={loadAll}
-              className="bg-stone-800 px-3 py-1 rounded border-1 border-white"
+              className="bg-stone-600 px-3 py-1 rounded border-1 border-white"
             >
               Clear filters
             </button>
@@ -128,7 +128,7 @@ function App() {
           <div className="flex flex-col">
             <button
               onClick={() => toggleShowGroupList()}
-              className="w-max px-3 py-1 rounded bg-stone-800 border-1 border-white"
+              className="px-3 py-1 rounded bg-stone-600 border-1 border-white w-30"
             >
               Group by
             </button>
@@ -136,13 +136,13 @@ function App() {
               <div className="absolute w-full">
                 <button
                   onClick={loadGroupedByExtension}
-                  className="top-8 w-max absolute px-3 py-1 rounded bg-stone-800 border-1 border-white"
+                  className="top-8 w-30 absolute px-3 py-1 rounded bg-stone-600 border-1 border-white"
                 >
                   Extension
                 </button>
                 <button
                   onClick={loadGroupedByDate}
-                  className="top-16 absolute bg-stone-800 px-3 py-1 rounded border-1 border-white"
+                  className="top-16 w-30 absolute bg-stone-600 px-3 py-1 rounded border-1 border-white"
                 >
                   Date
                 </button>
@@ -151,7 +151,7 @@ function App() {
           </div>
           <button
             onClick={loadDuplicatesMode}
-            className="bg-stone-800 px-3 py-1 rounded border-1 border-white"
+            className="bg-stone-600 px-3 py-1 rounded border-1 border-white"
           >
             Find Duplicates
           </button>
